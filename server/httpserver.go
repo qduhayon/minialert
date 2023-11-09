@@ -27,10 +27,10 @@ type SendRequestBody struct {
 
 type Alert struct {
 	Datatype  string
-	value     int
-	threshold int
-	status    bool
-	date      string
+	Value     int
+	Threshold int
+	Status    bool
+	Date      string
 }
 
 func sendDataMetric(writer http.ResponseWriter, request *http.Request) {
