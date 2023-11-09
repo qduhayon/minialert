@@ -33,4 +33,5 @@ func init() {
 	// Cobra supports local flags which will only run when this command
 	// is called directly, e.g.:
 	// clientCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
+	clientCmd.Flags().StringP("address", "a", "localhost:8080", "server address")
 }
