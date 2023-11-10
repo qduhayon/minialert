@@ -95,13 +95,22 @@ func Serve(port int) {
 	http.HandleFunc("/SendDataMetric", sendDataMetric)
 	http.HandleFunc("/GetAlertHistory", getAlertHistory)
 
+	// Load alert configuration from json file
+	conf, err := loadConf()
+	if err != nil {
+		log.Warn(err)
+	} else {
+		batteryThreshold = conf.BatteryThreshold
+		cpuThreshold = conf.CpuThreshold
+	}
+
 	// monitor cpu and battery in a separate thread
 	go monitorCpuBattery()
 
 	// run server
 	address := "localhost:" + fmt.Sprint(port)
 	log.Infof("Listening on address %v\n", address)
-	err := http.ListenAndServe(address, nil)
+	err = http.ListenAndServe(address, nil)
 	if err != nil {
 		log.Fatal(err)
 	}
