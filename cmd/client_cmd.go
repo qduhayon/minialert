@@ -15,7 +15,7 @@ var clientCmd = &cobra.Command{
 	- send updates for battery and CPU values
 	- get active alerts in the server`,
 	Run: func(cmd *cobra.Command, args []string) {
-
+		cmd.Usage()
 	},
 }
 

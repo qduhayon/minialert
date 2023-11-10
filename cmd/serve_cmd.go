@@ -15,7 +15,8 @@ var serveCmd = &cobra.Command{
 	Short: "Run minialert in server mode",
 	Long: `Run minialert in server mode: 
 	- listen to updates for battery and CPU values
-	- provide alerts in the standard output if battery or CPU fall below a specific threshold.`,
+	- provide alerts in the standard output if battery or CPU fall below a specific threshold
+	- load user-defined thresholds from miniconf.json file`,
 	Run: func(cmd *cobra.Command, args []string) {
 		port, err := cmd.Flags().GetInt("port")
 		if err != nil {
