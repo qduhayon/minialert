@@ -45,7 +45,7 @@ func sendDataMetric(writer http.ResponseWriter, request *http.Request) {
 		mutex.Unlock()
 		log.Info("New battery value: ", battery)
 	default:
-		http.Error(writer, "Data type "+metric.Datatype+" not handled", http.StatusBadRequest)
+		http.Error(writer, "Data type "+metric.Datatype+" not handled: use cpu or battery", http.StatusBadRequest)
 	}
 }
 
