@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
+	"minialert/logger"
 	"net/http"
 
 	log "github.com/sirupsen/logrus"
@@ -14,6 +15,9 @@ func Hello() {
 }
 
 func SendMetric(url string, metric Metric) {
+	// Set logger
+	log.SetFormatter(&logger.ClientFormatter{})
+
 	// Send request
 	buffer := new(bytes.Buffer)
 	json.NewEncoder(buffer).Encode(&metric)
@@ -32,6 +36,9 @@ func SendMetric(url string, metric Metric) {
 }
 
 func ListAlert(url string) {
+	// Set logger
+	log.SetFormatter(&logger.ClientFormatter{})
+
 	// Send request
 	request, err := http.NewRequest("GET", url+"/GetAlertHistory", nil)
 	client := &http.Client{}
@@ -52,8 +59,9 @@ func ListAlert(url string) {
 	if err != nil {
 		log.Error(err)
 	} else {
-		for _, alert := range alertHistory {
-			alert.log()
+		// Display alerts from most recent to oldest
+		for i := len(alertHistory) - 1; i >= 0; i-- {
+			alertHistory[i].display()
 		}
 	}
 

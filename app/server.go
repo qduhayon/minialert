@@ -3,6 +3,7 @@ package app
 import (
 	"encoding/json"
 	"fmt"
+	"minialert/logger"
 	"net/http"
 	"sync"
 	"time"
@@ -61,25 +62,25 @@ func monitorCpuBattery() {
 		mutex.Lock()
 		if cpu >= cpuThreshold && !cpuAlarmStatus {
 			cpuAlarmStatus = true
-			alert := Alert{"cpu", cpu, cpuThreshold, cpuAlarmStatus, time.Now().Format(time.RFC850)}
+			alert := Alert{"cpu", cpu, cpuThreshold, cpuAlarmStatus, time.Now().Format(time.DateTime)}
 			alerts = append(alerts, alert)
 			alert.log()
 		}
 		if cpu < cpuThreshold && cpuAlarmStatus {
 			cpuAlarmStatus = false
-			alert := Alert{"cpu", cpu, cpuThreshold, cpuAlarmStatus, time.Now().Format(time.RFC850)}
+			alert := Alert{"cpu", cpu, cpuThreshold, cpuAlarmStatus, time.Now().Format(time.DateTime)}
 			alerts = append(alerts, alert)
 			alert.log()
 		}
 		if battery <= batteryThreshold && !batteryAlarmStatus {
 			batteryAlarmStatus = true
-			alert := Alert{"battery", battery, batteryThreshold, batteryAlarmStatus, time.Now().Format(time.RFC850)}
+			alert := Alert{"battery", battery, batteryThreshold, batteryAlarmStatus, time.Now().Format(time.DateTime)}
 			alerts = append(alerts, alert)
 			alert.log()
 		}
 		if battery > batteryThreshold && batteryAlarmStatus {
 			batteryAlarmStatus = false
-			alert := Alert{"battery", battery, batteryThreshold, batteryAlarmStatus, time.Now().Format(time.RFC850)}
+			alert := Alert{"battery", battery, batteryThreshold, batteryAlarmStatus, time.Now().Format(time.DateTime)}
 			alerts = append(alerts, alert)
 			alert.log()
 		}
@@ -91,6 +92,9 @@ func monitorCpuBattery() {
 }
 
 func Serve(port int) {
+	// Set logger
+	log.SetFormatter(&logger.ServerFormatter{})
+
 	// http routing
 	http.HandleFunc("/SendDataMetric", sendDataMetric)
 	http.HandleFunc("/GetAlertHistory", getAlertHistory)

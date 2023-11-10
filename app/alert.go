@@ -12,6 +12,7 @@ type Alert struct {
 	Date      string
 }
 
+// Function used for logging in the server
 func (alert *Alert) log() {
 	if alert.Status {
 		if alert.Datatype == "cpu" {
@@ -24,6 +25,23 @@ func (alert *Alert) log() {
 			log.Infof("[ALERT] [CPU_RESTORED] [%v]", alert.Value)
 		} else {
 			log.Infof("[ALERT] [BATTERY_RESTORED] [%v]", alert.Value)
+		}
+	}
+}
+
+// Function used to diplay alerts in the client
+func (alert *Alert) display() {
+	if alert.Status {
+		if alert.Datatype == "cpu" {
+			log.Warnf("[%s] [ALERT] [CPU_HIGH] [%v]", alert.Date, alert.Value)
+		} else {
+			log.Warnf("[%s] [ALERT] [BATTERY_LOW] [%v]", alert.Date, alert.Value)
+		}
+	} else {
+		if alert.Datatype == "cpu" {
+			log.Infof("[%s] [ALERT] [CPU_RESTORED] [%v]", alert.Date, alert.Value)
+		} else {
+			log.Infof("[%s] [ALERT] [BATTERY_RESTORED] [%v]", alert.Date, alert.Value)
 		}
 	}
 }
