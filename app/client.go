@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
+	"io"
 	"minialert/logger"
 	"net/http"
 
@@ -19,9 +20,9 @@ func SendMetric(url string, metric Metric) {
 	log.SetFormatter(&logger.ClientFormatter{})
 
 	// Send request
-	buffer := new(bytes.Buffer)
-	json.NewEncoder(buffer).Encode(&metric)
-	request, err := http.NewRequest("POST", url+"/SendDataMetric", buffer)
+	buffer := bytes.Buffer{}
+	json.NewEncoder(&buffer).Encode(&metric)
+	request, err := http.NewRequest("POST", url+"/SendDataMetric", &buffer)
 	client := &http.Client{}
 
 	// Read response
@@ -32,6 +33,12 @@ func SendMetric(url string, metric Metric) {
 	}
 	if resp.StatusCode != 200 {
 		log.Warnf("StatusCode received: %v", resp.StatusCode)
+		b, err := io.ReadAll(resp.Body)
+		if err != nil {
+			log.Fatal(err)
+		} else {
+			log.Warn(string(b))
+		}
 	}
 }
 
