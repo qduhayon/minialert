@@ -13,8 +13,8 @@ import (
 // alertCmd represents the alert command
 var alertCmd = &cobra.Command{
 	Use:   "alert",
-	Short: "Retrieve active alerts",
-	Long:  `Retrieve active alerts`,
+	Short: "Retrieve alert history",
+	Long:  `Retrieve alert history`,
 	Run: func(cmd *cobra.Command, args []string) {
 		url, err := cmd.Flags().GetString("url")
 		if err != nil {
