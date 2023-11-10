@@ -16,18 +16,22 @@ clean: ## clean previous builds
 	@echo  "Clean previous builds..."
 	@rm -rf bin
 
+.PHONY: tidy
+tidy:
+	go mod tidy
+
 .PHONY: build
-build: ## build minialert
+build: tidy ## build minialert
 	@echo "Building minialert..."
 	go build -o bin/minialert
 
 .PHONY: build_windows
-build_windows: ## cross-compile minialert for windows amd64
+build_windows: tidy ## cross-compile minialert for windows amd64
 	@echo "Building minialert for Windows..."
 	GOOS=windows GOARCH=amd64 go build -o bin/minialert_win_amd64.exe
 
 .PHONY: build_linux
-build_linux: ## cross-compile minialert for linux amd64
+build_linux: tidy ## cross-compile minialert for linux amd64
 	@echo "Building minialert for Linux..."
 	GOOS=linux GOARCH=amd64 go build -o bin/minialert_linux_amd64
 
