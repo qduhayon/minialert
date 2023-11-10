@@ -4,7 +4,7 @@ Copyright © 2023 NAME HERE <EMAIL ADDRESS>
 package cmd
 
 import (
-	"minialert/client"
+	"minialert/app"
 
 	"github.com/spf13/cobra"
 )
@@ -17,7 +17,7 @@ var clientCmd = &cobra.Command{
 	- send updates for battery and CPU values
 	- get active alerts in the server`,
 	Run: func(cmd *cobra.Command, args []string) {
-		client.Hello()
+		app.Hello()
 	},
 }
 

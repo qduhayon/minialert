@@ -4,7 +4,7 @@ Copyright © 2023 NAME HERE <EMAIL ADDRESS>
 package cmd
 
 import (
-	"minialert/server"
+	"minialert/app"
 
 	"github.com/spf13/cobra"
 )
@@ -21,7 +21,7 @@ var serveCmd = &cobra.Command{
 		if err != nil {
 			port = 8080
 		}
-		server.Serve(port)
+		app.Serve(port)
 	},
 }
 

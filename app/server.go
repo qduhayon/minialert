@@ -1,4 +1,4 @@
-package server
+package app
 
 import (
 	"encoding/json"
@@ -6,6 +6,8 @@ import (
 	"net/http"
 	"sync"
 	"time"
+
+	log "github.com/sirupsen/logrus"
 )
 
 var (
@@ -19,44 +21,30 @@ var (
 	mutex              sync.Mutex
 )
 
-// Struct used for json parsing and validation
-type SendRequestBody struct {
-	Datatype string
-	Value    int
-}
-
-type Alert struct {
-	Datatype  string
-	Value     int
-	Threshold int
-	Status    bool
-	Date      string
-}
-
 func sendDataMetric(writer http.ResponseWriter, request *http.Request) {
 	// Parse request body
-	var requestBody SendRequestBody
+	var metric Metric
 	dec := json.NewDecoder(request.Body)
 	dec.DisallowUnknownFields()
-	err := dec.Decode(&requestBody)
+	err := dec.Decode(&metric)
 	if err != nil {
 		http.Error(writer, err.Error(), http.StatusBadRequest)
 	}
 
 	// Update data values
-	switch requestBody.Datatype {
+	switch metric.Datatype {
 	case "cpu":
 		mutex.Lock()
-		cpu = requestBody.Value
+		cpu = metric.Value
 		mutex.Unlock()
-		fmt.Println("New cpu value: ", cpu)
+		log.Info("New cpu value: ", cpu)
 	case "battery":
 		mutex.Lock()
-		battery = requestBody.Value
+		battery = metric.Value
 		mutex.Unlock()
-		fmt.Println("New battery value: ", battery)
+		log.Info("New battery value: ", battery)
 	default:
-		http.Error(writer, "Data type "+requestBody.Datatype+" not handled", http.StatusBadRequest)
+		http.Error(writer, "Data type "+metric.Datatype+" not handled", http.StatusBadRequest)
 	}
 }
 
@@ -73,23 +61,27 @@ func monitorCpuBattery() {
 		mutex.Lock()
 		if cpu >= cpuThreshold && !cpuAlarmStatus {
 			cpuAlarmStatus = true
-			alerts = append(alerts, Alert{"cpu", cpu, cpuThreshold, cpuAlarmStatus, time.Now().Format(time.RFC850)})
-			fmt.Println(alerts[len(alerts)-1])
+			alert := Alert{"cpu", cpu, cpuThreshold, cpuAlarmStatus, time.Now().Format(time.RFC850)}
+			alerts = append(alerts, alert)
+			alert.log()
 		}
 		if cpu < cpuThreshold && cpuAlarmStatus {
 			cpuAlarmStatus = false
-			alerts = append(alerts, Alert{"cpu", cpu, cpuThreshold, cpuAlarmStatus, time.Now().Format(time.RFC850)})
-			fmt.Println(alerts[len(alerts)-1])
+			alert := Alert{"cpu", cpu, cpuThreshold, cpuAlarmStatus, time.Now().Format(time.RFC850)}
+			alerts = append(alerts, alert)
+			alert.log()
 		}
 		if battery <= batteryThreshold && !batteryAlarmStatus {
 			batteryAlarmStatus = true
-			alerts = append(alerts, Alert{"battery", battery, batteryThreshold, batteryAlarmStatus, time.Now().Format(time.RFC850)})
-			fmt.Println(alerts[len(alerts)-1])
+			alert := Alert{"battery", battery, batteryThreshold, batteryAlarmStatus, time.Now().Format(time.RFC850)}
+			alerts = append(alerts, alert)
+			alert.log()
 		}
 		if battery > batteryThreshold && batteryAlarmStatus {
 			batteryAlarmStatus = false
-			alerts = append(alerts, Alert{"battery", battery, batteryThreshold, batteryAlarmStatus, time.Now().Format(time.RFC850)})
-			fmt.Println(alerts[len(alerts)-1])
+			alert := Alert{"battery", battery, batteryThreshold, batteryAlarmStatus, time.Now().Format(time.RFC850)}
+			alerts = append(alerts, alert)
+			alert.log()
 		}
 		mutex.Unlock()
 
@@ -108,6 +100,9 @@ func Serve(port int) {
 
 	// run server
 	address := "localhost:" + fmt.Sprint(port)
-	fmt.Printf("Listening on address %s\n", address)
-	http.ListenAndServe(address, nil)
+	log.Infof("Listening on address %v\n", address)
+	err := http.ListenAndServe(address, nil)
+	if err != nil {
+		log.Fatal(err)
+	}
 }
