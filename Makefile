@@ -5,10 +5,9 @@ help:
 .PHONY: install_go
 install_go: ## clean previous install of go, then download and install go 1.21.4 for linux
 	sudo rm -rf /usr/local/go
-	wget -4 https://go.dev/dl/go1.21.4.linux-amd64.tar.gz
-	sudo tar -C /usr/local -xzf go1.21.4.linux-amd64.tar.gz
-	rm go1.21.4.linux-amd64.tar.gz
-	export PATH=$PATH:/usr/local/go/bin
+	sudo snap remove go
+	sudo apt remove golang-go
+	sudo snap install go --classic
 	go version
 
 .PHONY: clean
