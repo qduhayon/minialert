@@ -15,15 +15,15 @@ type Alert struct {
 func (alert *Alert) log() {
 	if alert.Status {
 		if alert.Datatype == "cpu" {
-			log.Warnf("[ALERT] [CPU_HIGH] [%v]\n", alert.Value)
+			log.Warnf("[ALERT] [CPU_HIGH] [%v]", alert.Value)
 		} else {
-			log.Warnf("[ALERT] [BATTERY_LOW] [%v]\n", alert.Value)
+			log.Warnf("[ALERT] [BATTERY_LOW] [%v]", alert.Value)
 		}
 	} else {
 		if alert.Datatype == "cpu" {
-			log.Infof("[ALERT] [CPU_RESTORED] [%v]\n", alert.Value)
+			log.Infof("[ALERT] [CPU_RESTORED] [%v]", alert.Value)
 		} else {
-			log.Infof("[ALERT] [BATTERY_RESTORED] [%v]\n", alert.Value)
+			log.Infof("[ALERT] [BATTERY_RESTORED] [%v]", alert.Value)
 		}
 	}
 }
